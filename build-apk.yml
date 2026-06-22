@@ -1,0 +1,41 @@
+name: Build Hand Control APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Download gesture model into app assets
+        run: |
+          mkdir -p app/src/main/assets
+          curl -L -o app/src/main/assets/gesture_recognizer.task \
+            https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task
+
+      - name: Generate Gradle wrapper
+        run: |
+          gradle wrapper --gradle-version 8.7
+          chmod +x ./gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: hand-control-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
