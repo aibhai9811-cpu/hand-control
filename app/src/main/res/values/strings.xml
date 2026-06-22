@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Hand Control</string>
+    <string name="accessibility_service_description">Watches your front camera for hand gestures and uses them to control volume, navigation, brightness, and mute. Camera frames are processed entirely on this device and never leave your phone.</string>
+</resources>
